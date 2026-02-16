@@ -1,10 +1,12 @@
 # Author: https://github.com/bennywee/afl_probabilistic_model
 source("R/01-load-data/data_type_lookup.R")
 
-scrape_data <- function(scraping_function, season, round) {
+scrape_data <- function(scraping_function, season) {
   tryCatch(
-    scraping_function(season = season,
-      round_number = round,
+    scraping_function(
+      season = season,
+      # per docs, round = NULL pulls all rounds
+      round_number = NULL,
       comp = "AFLM",
       source = "afltables"
     ),
@@ -12,15 +14,15 @@ scrape_data <- function(scraping_function, season, round) {
   )
 }
 
-write_raw_data <- function(table_type, season, rounds, output_path) {
+write_raw_data <- function(table_type, season, output_path) {
   lookup_function <- data_type_lookup[[table_type]]
 
   data_ls <- future.apply::future_Map(
     function(x, y)
     scrape_data(
-      scraping_function = lookup_function[[1]], season = x, round = y
+      scraping_function = lookup_function[[1]], season = x
     ),
-    x = season, y = rounds
+    x = season
   )
 
   df <- do.call(rbind, data_ls) |>

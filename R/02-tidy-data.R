@@ -7,24 +7,6 @@ results <- open_dataset("data/raw/results", unify_schemas = TRUE) |> collect()
 
 # Exploration - results ---------------------------------------------------
 
-# First, get a feel for the data
-results_explore <- results |>
-  # include only regular season matches
-  filter(grepl("R", Round)) |>
-  group_by(Season) |>
-  mutate(Season.Prop = Round.Number / max(Round.Number)) |>
-  group_by(Home.Team) |>
-  mutate(Mean.Margin = mean(Margin)) |>
-  ungroup() |>
-  mutate(
-    Diff.Mean.Margin = Margin - Mean.Margin,
-    Winner = case_when(
-      Margin > 0 ~ Home.Team,
-      Margin < 0 ~ Away.Team,
-      Margin == 0 ~ "Draw"
-    )
-  )
-
 # Lengthen results so it is suitable for modelling
 # I want a df that allows me to filter for a team and see all their games,
 # both home and away, with a result.

@@ -49,6 +49,7 @@ results_long <- bind_rows(results_long_home, results_long_away)
 # The margin should be the margin of the team in Team
 # We also want a result column for ease
 results_long <- results_long |>
+  filter(grepl("R", Round)) |>
   mutate(
     Margin = Home * Margin - (1 - Home) * Margin,
     Result = case_when(
